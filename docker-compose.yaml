@@ -1,35 +1,35 @@
 services:
   laravel:
+    image: laravel_alpine_image
     build:
       context: ./laravel
     depends_on:
       - mysql
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: laravel_db
+      DB_USERNAME: admin
+      DB_PASSWORD: admin123
     volumes:
       - ./laravel:/var/www/html
-    environment:
-      MYSQL_HOST: mysql
-      MYSQL_DATABASE: laravel_db
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: Admin123
+    command: sh -c "php artisan migrate --seed || php artisan migrate:fresh --seed && php-fpm"
 
   nginx:
-    build:
-      context: ./nginx
+    image: nginx
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
     ports:
       - "80:80"
-    depends_on:
-      - laravel
 
   mysql:
-    image: mysql:latest
+    image: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: Admin123
+      MYSQL_ROOT_PASSWORD: admin123
       MYSQL_DATABASE: laravel_db
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: Admin123
 
   random_http:
-    build:
-      context: ./random_http
+    image: khaosdoctor/http-random-api-exporter:latest
     ports:
       - "8080:80"
