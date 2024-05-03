@@ -1,5 +1,7 @@
 # Laravel-docker
 
+docker-compose.yaml contains all environment configuations incl database
+
 Please run following command to start:
 docker-compose up --build
 
